@@ -1,6 +1,6 @@
 {
   "name": "@buzz-dee/potrace-ts",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": false,
   "type": "module",
   "description": "typescript potrace module",
@@ -53,7 +53,11 @@
     "not dead",
     "not ie 11"
   ],
-  "keywords": ["potrace", "typescript", "image to svg"],
+  "keywords": [
+    "potrace",
+    "typescript",
+    "image to svg"
+  ],
   "productName": "potrace-ts",
   "jest": {
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
