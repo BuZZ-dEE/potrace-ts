@@ -1,4 +1,4 @@
-# @kcaitech/potrace-ts
+# @buzz-dee/potrace-ts
 
 A TypeScript implementation of Potrace library for converting bitmaps to scalable vector graphics (SVG).
 
@@ -12,14 +12,14 @@ Potrace is a tool for converting bitmap images (such as PNG, JPEG, etc.) into ve
 
 ```bash
 # Using npm
-npm install @kcaitech/potrace-ts
+npm install @buzz-dee/potrace-ts
 
 ```
 
 ## Usage Example
 
 ```typescript
-import { Potrace } from "@kcaitech/potrace-ts";
+import { Potrace } from "@buzz-dee/potrace-ts";
 ...
 // Convert image to SVG path
 const imgdata: ImageData = canvas.getImageData(0, 0, size, size)
