@@ -1057,8 +1057,8 @@ export class Potrace {
         this._validateParameters(newParams);
 
         const thisParams: any = this._params;
-        for (key in this._params) {
-            if (Object.prototype.hasOwnProperty.call(this, key) && Object.prototype.hasOwnProperty.call(newParams, key)) {
+        for (key in thisParams) {
+            if (Object.prototype.hasOwnProperty.call(thisParams, key) && Object.prototype.hasOwnProperty.call(newParams, key)) {
                 tmpOldVal = thisParams[key];
                 thisParams[key] = newParams[key];
 
