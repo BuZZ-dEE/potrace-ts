@@ -1,3 +1,6 @@
 node_modules
 dist
 .DS_Store
+
+# VSCode history plugin
+.history
