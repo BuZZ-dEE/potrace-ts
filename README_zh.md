@@ -1,4 +1,4 @@
-# @kcaitech/potrace-ts
+# @buzz-dee/potrace-ts
 
 TypeScript 实现的 Potrace 库，用于将位图转换为可缩放矢量图形（SVG）。
 
@@ -12,14 +12,14 @@ Potrace 是一个用于将位图（如 PNG、JPEG 等）转换为矢量图形的
 
 ```bash
 # 使用 npm
-npm install @kcaitech/potrace-ts
+npm install @buzz-dee/potrace-ts
 
 ```
 
 ## 使用示例
 
 ```typescript
-import { Potrace } from "@kcaitech/potrace-ts";
+import { Potrace } from "@buzz-dee/potrace-ts";
 ...
 // 图片转svg path
 const imgdata: ImageData = canvas.getImageData(0, 0, size, size)
