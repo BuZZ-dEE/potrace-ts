@@ -27,7 +27,7 @@ export default [
         },
         rules: {
             ...tsPlugin.configs.recommended.rules,
-            "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/no-explicit-any": "error",
             "@typescript-eslint/explicit-function-return-type": "error",
             "@typescript-eslint/no-inferrable-types": "off",
             "@typescript-eslint/no-non-null-assertion": "off",

@@ -34,6 +34,9 @@ interface _PotraceOptions {
     width: number,
     height: number
 }
+
+type PotraceParameterValue = _PotraceOptions[keyof _PotraceOptions] | undefined;
+
 /**
  * Potrace class
  *
@@ -1051,12 +1054,12 @@ export class Potrace {
      * Sets algorithm parameters
      * @param {Potrace~Options} newParams
      */
-    setParameters(newParams: any): void {
-        let key, tmpOldVal;
+    setParameters(newParams: PotraceOptions): void {
+        let key: keyof _PotraceOptions, tmpOldVal: PotraceParameterValue;
 
         this._validateParameters(newParams);
 
-        const thisParams: any = this._params;
+        const thisParams: Record<keyof _PotraceOptions, PotraceParameterValue> = this._params;
         for (key in thisParams) {
             if (Object.prototype.hasOwnProperty.call(thisParams, key) && Object.prototype.hasOwnProperty.call(newParams, key)) {
                 tmpOldVal = thisParams[key];
