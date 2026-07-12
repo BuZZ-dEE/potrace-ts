@@ -33,6 +33,7 @@ const potrace = new Potrace(imageData, () => {}, {
 
 const svg = potrace.getSVG();
 const pathData = potrace.getSVGPath({ x: 1, y: 1 }, { x: 0, y: 0 });
+const defaultPathData = potrace.getSVGPath();
 ```
 
 ## API
@@ -47,11 +48,26 @@ Creates a Potrace instance from `ImageData`.
 
 ### Methods
 
-- `getSVG(scale?)`: returns a complete SVG document string.
-- `getSVGPath(scale, trans)`: returns SVG path data only.
+- `getSVG(scale?)`: returns a complete SVG document string. If `scale` is omitted, it uses configured `width` and `height` scaling, or `{ x: 1, y: 1 }`.
+- `getSVGPath(scale?, trans?)`: returns SVG path data only. If `scale` is omitted, it uses configured `width` and `height` scaling, or `{ x: 1, y: 1 }`. If `trans` is omitted, it defaults to `{ x: 0, y: 0 }`.
 - `getPathTag(fillColor?, scale?, trans?)`: returns a `<path>` tag.
 - `getSymbol(id)`: returns an SVG `<symbol>` tag.
 - `setParameters(options)`: updates tracing/output parameters.
+
+Scale and translation values use this shape:
+
+```typescript
+type TransformPoint = { x: number; y: number };
+```
+
+Examples:
+
+```typescript
+const path = potrace.getSVGPath();
+const scaledPath = potrace.getSVGPath({ x: 2, y: 2 });
+const movedPath = potrace.getSVGPath(undefined, { x: 10, y: 20 });
+const scaledAndMovedPath = potrace.getSVGPath({ x: 2, y: 2 }, { x: 10, y: 20 });
+```
 
 ### Options
 

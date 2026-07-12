@@ -1163,11 +1163,11 @@ export class Potrace {
     /**
      * Generates SVG path data without wrapping it in a `<path>` tag.
      *
-     * @param {{x: number, y: number}} scale - Scale applied to path coordinates.
-     * @param {{x: number, y: number}} trans - Translation applied to path coordinates.
+     * @param {{x: number, y: number}} [scale] - Optional scale applied to path coordinates. Defaults to configured output scaling or `{x: 1, y: 1}`.
+     * @param {{x: number, y: number}} [trans={x: 0, y: 0}] - Translation applied to path coordinates.
      * @returns {string} SVG path data.
      */
-    getSVGPath(scale: { x: number, y: number }, trans: { x: number, y: number }): string {
+    getSVGPath(scale?: { x: number, y: number }, trans: { x: number, y: number } = { x: 0, y: 0 }): string {
         const scale_ = scale ?? {
             x: this._params.width ? this._params.width / this._luminanceData!.width : 1,
             y: this._params.height ? this._params.height / this._luminanceData!.height : 1,
