@@ -7,14 +7,15 @@ const COLOR_DEPTH = 256;
 const COLOR_RANGE_END = COLOR_DEPTH - 1;
 
 /**
- * Calculates array index for pair of indexes. We multiple column (x) by 256 and then add row to it,
- * this way `(index(i, j) + 1) === index(i, j + i)` thus we can reuse `index(i, j)` we once calculated
+ * Calculates the lookup-table index for a pair of color levels.
  *
- * Note: this is different from how indexes calculated in {@link Bitmap} class, keep it in mind.
+ * The column is multiplied by 256 and the row is added, so `(index(i, j) + 1) === index(i, j + 1)`.
  *
- * @param x
- * @param y
- * @returns {*}
+ * Note: this is different from how indexes are calculated in {@link Bitmap}.
+ *
+ * @param {number} x - Column color level.
+ * @param {number} y - Row color level.
+ * @returns {number} Flat lookup-table index.
  * @private
  */
 function index(x: number, y: number): number {
@@ -25,9 +26,9 @@ function normalizeMinMax(levelMin?: number, levelMax?: number): Array<number> {
     /**
      * Shared parameter normalization for methods 'multilevelThresholding', 'autoThreshold', 'getDominantColor' and 'getStats'
      *
-     * @param levelMin
-     * @param levelMax
-     * @returns {number[]}
+     * @param {number} [levelMin] - Minimum color level.
+     * @param {number} [levelMax] - Maximum color level.
+     * @returns {number[]} Normalized `[levelMin, levelMax]` range.
      * @private
      */
     levelMin = typeof levelMin === 'number' ? utils.clamp(Math.round(levelMin), 0, COLOR_RANGE_END) : 0;
@@ -65,11 +66,10 @@ interface HistogramStats {
 }
 
 /**
- * 1D Histogram
+ * One-dimensional histogram of 8-bit color or luminance values.
  *
- * @param {Number|Bitmap|Jimp} imageSource - Image to collect pixel data from. Or integer to create empty histogram for image of specific size
- * @param [mode] Used only for Jimp images. {@link Bitmap} currently can only store 256 values per pixel, so it's assumed that it contains values we are looking for
- * @constructor
+ * @param {number|Bitmap|ImageData} imageSource - Pixel count for an empty histogram, a {@link Bitmap}, or RGBA {@link ImageData} to collect values from.
+ * @param {HistogramMode} [mode=HistogramMode.MODE_LUMINANCE] - Channel to collect from `ImageData`. `Bitmap` values are already treated as luminance values.
  * @protected
  */
 export class Histogram {
@@ -100,9 +100,10 @@ export class Histogram {
     static MODE_B = HistogramMode.MODE_B;
 
     /**
-     * Initializes data array for an image of given pixel size
-     * @param imageSize
-     * @returns {Uint8Array|Uint16Array|Uint32Array}
+     * Initializes a histogram data array for an image of the given pixel size.
+     *
+     * @param {number} imageSize - Number of source pixels.
+     * @returns {HistogramArray} Histogram storage array.
      * @private
      */
     _createArray(imageSize: number): HistogramArray {
@@ -115,9 +116,11 @@ export class Histogram {
     }
 
     /**
-     * Aggregates color data from {@link Jimp} instance
-     * @param {Jimp} source
-     * @param mode
+     * Aggregates channel data from RGBA {@link ImageData}.
+     *
+     * @param {ImageData} source - Source image data.
+     * @param {HistogramMode} mode - Channel to aggregate.
+     * @returns {HistogramArray} Histogram storage array.
      * @private
      */
     _collectValuesJimp(source: ImageData, mode: HistogramMode): HistogramArray {
@@ -141,8 +144,10 @@ export class Histogram {
     }
 
     /**
-     * Aggregates color data from {@link Bitmap} instance
-     * @param {Bitmap} source
+     * Aggregates luminance values from a {@link Bitmap} instance.
+     *
+     * @param {Bitmap} source - Source bitmap.
+     * @returns {HistogramArray} Histogram storage array.
      * @private
      */
     _collectValuesBitmap(source: Bitmap): HistogramArray {
@@ -158,9 +163,10 @@ export class Histogram {
     }
 
     /**
-     * Returns array of color indexes in ascending order
-     * @param refresh
-     * @returns {*}
+     * Returns color levels sorted by their occurrence count in ascending order.
+     *
+     * @param {boolean} [refresh] - Rebuild the sorted index cache when true.
+     * @returns {number[]} Sorted color levels.
      * @private
      */
     _getSortedIndexes(refresh?: boolean): Array<number> {
@@ -186,9 +192,10 @@ export class Histogram {
 
     /**
      * Builds lookup table H from lookup tables P and S.
-     * see {@link http://www.iis.sinica.edu.tw/page/jise/2001/200109_01.pdf|this paper} for more details
      *
-     * @returns {Float64Array}
+     * See {@link http://www.iis.sinica.edu.tw/page/jise/2001/200109_01.pdf|this paper} for more details.
+     *
+     * @returns {Float64Array} Lookup table H.
      * @private
      */
     _thresholdingBuildLookupTable(): Float64Array {
@@ -236,16 +243,15 @@ export class Histogram {
     }
 
     /**
-     * Implements Algorithm For Multilevel Thresholding
-     * Receives desired number of color stops, returns array of said size. Could be limited to a range levelMin..levelMax
+     * Implements the algorithm for multilevel thresholding.
      *
-     * Regardless of levelMin and levelMax values it still relies on between class variances for the entire histogram
+     * Receives the desired number of color stops and returns an array of thresholds. The search can be limited to a range.
      *
-     * @param amount - how many thresholds should be calculated
-     * @param [levelMin=0] - histogram segment start
-     * @param [levelMax=255] - histogram segment end
-     * @returns {number[]}
-       */
+     * @param {number} amount - How many thresholds should be calculated.
+     * @param {number} [levelMin=0] - Histogram segment start.
+     * @param {number} [levelMax=255] - Histogram segment end.
+     * @returns {number[]} Calculated threshold levels.
+     */
     multilevelThresholding(amount: number, levelMin?: number, levelMax?: number): Array<number> {
         const normalizedLevelMin = normalizeMinMax(levelMin, levelMax);
         levelMax = normalizedLevelMin[1];
@@ -303,11 +309,11 @@ export class Histogram {
     }
 
     /**
-     * Automatically finds threshold value using Algorithm For Multilevel Thresholding
+     * Automatically finds a threshold value using multilevel thresholding.
      *
-     * @param {number} [levelMin]
-     * @param {number} [levelMax]
-     * @returns {null|number}
+     * @param {number} [levelMin=0] - Histogram segment start.
+     * @param {number} [levelMax=255] - Histogram segment end.
+     * @returns {number|null} Calculated threshold, or `null` when no threshold is available.
      */
     autoThreshold(levelMin?: number, levelMax?: number): number | null {
         const  value = this.multilevelThresholding(1, levelMin, levelMax);
@@ -315,12 +321,12 @@ export class Histogram {
     }
 
     /**
-     * Returns dominant color in given range. Returns -1 if not a single color from the range present on the image
+     * Returns the dominant color level in the given range.
      *
-     * @param [levelMin=0]
-     * @param [levelMax=255]
-     * @param [tolerance=1]
-     * @returns {number}
+     * @param {number} levelMin - Histogram segment start.
+     * @param {number} levelMax - Histogram segment end.
+     * @param {number} [tolerance=1] - Neighboring level tolerance.
+     * @returns {number} Dominant color level, or `-1` if the range contains no colors.
      */
     getDominantColor(levelMin: number, levelMax: number, tolerance?: number): number {
         const normalized = normalizeMinMax(levelMin, levelMax);
@@ -364,10 +370,10 @@ export class Histogram {
      *
      * If no pixels colors from specified range present on the image - most values will be NaN
      *
-     * @param {Number} [levelMin=0] - histogram segment start
-     * @param {Number} [levelMax=255] - histogram segment end
-     * @param {Boolean} [refresh=false] - if cached result can be returned
-     * @returns {{levels: {mean: (number|*), median: *, stdDev: number, unique: number}, pixelsPerLevel: {mean: (number|*), median: (number|*), peak: number}, pixels: number}}
+     * @param {number} levelMin - Histogram segment start.
+     * @param {number} levelMax - Histogram segment end.
+     * @param {boolean} [refresh=false] - Recompute cached stats when true.
+     * @returns {HistogramStats} Histogram statistics for the requested segment.
      */
     getStats(levelMin: number, levelMax: number, refresh?: boolean): HistogramStats {
         const normalized = normalizeMinMax(levelMin, levelMax);

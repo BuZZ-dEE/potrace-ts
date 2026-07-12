@@ -1,5 +1,8 @@
 import { Point } from "./point";
 
+/**
+ * Optimization candidate used while replacing curve segments.
+ */
 export class Opti {
     pen: number = 0;
     c: Array<Point> = [new Point(), new Point()];

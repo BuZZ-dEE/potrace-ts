@@ -4,12 +4,12 @@ import * as utils from "../utils"
 // var Histogram;
 import { Histogram } from "./histogram";
 /**
- * Represents a bitmap where each pixel can be a number in range of 0..255
+ * Represents a bitmap where each pixel is a value from `0` to `255`.
+ *
  * Used internally to store luminance data.
  *
- * @param {Number} w
- * @param {Number} h
- * @constructor
+ * @param {number} w - Bitmap width in pixels.
+ * @param {number} h - Bitmap height in pixels.
  */
 export class Bitmap {
     private _histogram?: Histogram;
@@ -29,10 +29,11 @@ export class Bitmap {
     }
 
     /**
-     * Returns pixel value
+     * Returns the pixel value at the given coordinates.
      *
-     * @param {Number|Point} x - index, point or x
-     * @param {Number} [y]
+     * @param {number} x - Pixel x coordinate.
+     * @param {number} y - Pixel y coordinate.
+     * @returns {number} Pixel value.
      */
     getValueAt(x: number, y: number): number {
         const index = this.pointToIndex(x, y);
@@ -40,10 +41,11 @@ export class Bitmap {
     }
 
     /**
-     * Converts {@link Point} to index value
+     * Converts a flat pixel index to a {@link Point}.
      *
-     * @param {Number} index
-     * @returns {Point}
+     * @param {number} index - Flat pixel index.
+     * @param {Point} [point] - Optional point instance to reuse for the result.
+     * @returns {Point} Converted point.
      */
     indexToPoint(index: number, point?: Point): Point {
         point = point ?? new Point();
@@ -60,11 +62,11 @@ export class Bitmap {
     }
 
     /**
-     * Calculates index for point or coordinate pair
+     * Calculates a flat pixel index for a point or coordinate pair.
      *
-     * @param {Number|Point} pointOrX
-     * @param {Number} [y]
-     * @returns {Number}
+     * @param {Point|number} pointOrX - Point instance or x coordinate.
+     * @param {number} [y] - Pixel y coordinate when the first argument is an x coordinate.
+     * @returns {number} Flat pixel index, or `-1` for coordinates outside the accepted range.
      */
     pointToIndex(point: Point): number;
     pointToIndex(x: number, y: number): number;
@@ -85,10 +87,10 @@ export class Bitmap {
     }
 
     /**
-     * Makes a copy of current bitmap
+     * Makes a copy of the current bitmap.
      *
-     * @param {Function} [iterator] optional callback, used for processing pixel value. Accepted arguments: value, index
-     * @returns {Bitmap}
+     * @param {(value: number, index: number) => number} [iterator] - Optional callback used to transform each pixel value.
+     * @returns {Bitmap} Copied bitmap.
      */
     copy(iterator?: (value: number, index: number) => number): Bitmap {
         const bm = new Bitmap(this.width, this.height),
@@ -105,6 +107,11 @@ export class Bitmap {
         return bm;
     }
 
+    /**
+     * Creates and caches a histogram for the bitmap values.
+     *
+     * @returns {Histogram} Histogram for this bitmap.
+     */
     histogram(): Histogram {
         if (this._histogram) {
             return this._histogram;

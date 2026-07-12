@@ -151,11 +151,12 @@ export const setHtmlAttr = setHtmlAttribute
 
 
 /**
- * Generates path instructions for given curve
+ * Generates SVG path instructions for a curve.
  *
- * @param {Curve} curve
- * @param {Number} [scale]
- * @returns {string}
+ * @param {Curve} curve - Curve to render.
+ * @param {{x: number, y: number}} scale - Scale applied to curve coordinates.
+ * @param {{x: number, y: number}} trans - Translation applied to curve coordinates.
+ * @returns {string} SVG path instruction string.
  */
 export function renderCurve(curve: Curve, scale: { x: number, y: number }, trans: { x: number, y: number }): string {
 

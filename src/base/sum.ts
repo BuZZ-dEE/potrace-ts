@@ -1,3 +1,12 @@
+/**
+ * Cumulative sums used while fitting polygons to paths.
+ *
+ * @param {number} x - Sum of x coordinates.
+ * @param {number} y - Sum of y coordinates.
+ * @param {number} xy - Sum of x*y products.
+ * @param {number} x2 - Sum of squared x coordinates.
+ * @param {number} y2 - Sum of squared y coordinates.
+ */
 export class Sum {
     x: number;
     y: number;

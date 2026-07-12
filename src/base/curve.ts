@@ -1,10 +1,9 @@
 import { Point } from "./point";
 
 /**
- * Curve type
+ * Curve data produced by the Potrace path processing pipeline.
  *
- * @param n
- * @constructor
+ * @param {number} n - Number of curve segments.
  * @protected
  */
 export class Curve {

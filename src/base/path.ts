@@ -1,6 +1,9 @@
 import { Curve } from "./curve";
 import { Point } from "./point";
 
+/**
+ * Pixel path and bounds produced during bitmap tracing.
+ */
 export class Path {
     area: number = 0;
     len: number = 0;

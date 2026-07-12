@@ -38,10 +38,11 @@ interface _PotraceOptions {
 type PotraceParameterValue = _PotraceOptions[keyof _PotraceOptions] | undefined;
 
 /**
- * Potrace class
+ * Traces bitmap image data and renders it as SVG path data or SVG markup.
  *
- * @param {Potrace~Options} [options]
- * @constructor
+ * @param {ImageData} target - Source RGBA image data.
+ * @param {(error?: Error) => void} callback - Called after the image data has been converted to luminance data.
+ * @param {PotraceOptions} [options] - Optional tracing and output settings.
  */
 export class Potrace {
 
@@ -97,7 +98,8 @@ export class Potrace {
 
 
     /**
-     * Creating a new {@link Path} for every group of black pixels.
+     * Creates a {@link Path} for each connected group of traced pixels.
+     *
      * @private
      */
     _bmToPathlist(): void {
@@ -118,10 +120,10 @@ export class Potrace {
         const saveBlackMap = blackMap.copy();
 
         /**
-         * finds next black pixel of the image
+         * Finds the next traced pixel in the bitmap.
          *
-         * @param {Point} point
-         * @returns {boolean}
+         * @param {Point} point - Point instance updated with the found coordinates.
+         * @returns {boolean} Whether a traced pixel was found.
          * @private
          */
         function findNext(point: Point): boolean {
@@ -252,7 +254,8 @@ export class Potrace {
     }
 
     /**
-     * Processes path list created by _bmToPathlist method creating and optimizing {@link Curve}'s
+     * Processes paths created by {@link _bmToPathlist} and creates optimized {@link Curve} instances.
+     *
      * @private
      */
     _processPath(): void {
@@ -1007,8 +1010,9 @@ export class Potrace {
     }
 
     /**
-     * Validates some of parameters
-     * @param params
+     * Validates tracing parameters that have restricted value ranges or types.
+     *
+     * @param {PotraceOptions} params - Parameters to validate.
      * @private
      */
     _validateParameters(params: PotraceOptions): void {
@@ -1029,6 +1033,13 @@ export class Potrace {
         }
     }
 
+    /**
+     * Converts source RGBA image data into a luminance bitmap used by the tracer.
+     *
+     * @param {ImageData} image - Source RGBA image data.
+     * @returns {Bitmap} Luminance bitmap.
+     * @private
+     */
     _processLoadedImage(image: ImageData): Bitmap {
         const bitmap = new Bitmap(image.width, image.height);
         const pixels = image.data;
@@ -1051,8 +1062,11 @@ export class Potrace {
     }
 
     /**
-     * Sets algorithm parameters
-     * @param {Potrace~Options} newParams
+     * Sets tracing and output parameters.
+     *
+     * Parameters affecting traced geometry mark the instance as unprocessed so paths are regenerated on the next render call.
+     *
+     * @param {PotraceOptions} newParams - Parameters to merge into the current configuration.
      */
     setParameters(newParams: PotraceOptions): void {
         let key: keyof _PotraceOptions, tmpOldVal: PotraceParameterValue;
@@ -1073,10 +1087,12 @@ export class Potrace {
     }
 
     /**
-     * Generates just <path> tag without rest of the SVG file
+     * Generates a single SVG `<path>` tag without the surrounding SVG document.
      *
-     * @param {String} [fillColor] - overrides color from parameters
-     * @returns {String}
+     * @param {string} [fillColor] - Optional fill color overriding the configured foreground color.
+     * @param {{x: number, y: number}} [scale={x: 1, y: 1}] - Scale applied to path coordinates.
+     * @param {{x: number, y: number}} [trans={x: 0, y: 0}] - Translation applied to path coordinates.
+     * @returns {string} SVG `<path>` tag markup.
      */
     getPathTag(fillColor?: string, scale: { x: number, y: number } = { x: 1, y: 1 }, trans: { x: number, y: number } = { x: 0, y: 0 }): string {
         fillColor = arguments.length === 0 ? this._params.color : fillColor;
@@ -1103,11 +1119,12 @@ export class Potrace {
     }
 
     /**
-     * Returns <symbol> tag. Always has viewBox specified and comes with no fill color,
-     * so it could be changed with <use> tag
+     * Returns an SVG `<symbol>` tag with a `viewBox` and no fill color.
      *
-     * @param id
-     * @returns {string}
+     * The fill can be supplied by a `<use>` element.
+     *
+     * @param {string} id - Symbol id attribute value.
+     * @returns {string} SVG `<symbol>` tag markup.
      */
     getSymbol(id: string): string {
         return '<symbol ' +
@@ -1118,8 +1135,10 @@ export class Potrace {
     }
 
     /**
-     * Generates SVG image
-     * @returns {String}
+     * Generates a complete SVG document string.
+     *
+     * @param {{x: number, y: number}} [scale] - Optional scale applied to path coordinates.
+     * @returns {string} SVG document markup.
      */
     getSVG(scale?: { x: number, y: number }): string {
         const width = this._params.width || this._luminanceData!.width;
@@ -1142,8 +1161,11 @@ export class Potrace {
     }
 
     /**
-     * Generates SVG path
-     * @returns {String}
+     * Generates SVG path data without wrapping it in a `<path>` tag.
+     *
+     * @param {{x: number, y: number}} scale - Scale applied to path coordinates.
+     * @param {{x: number, y: number}} trans - Translation applied to path coordinates.
+     * @returns {string} SVG path data.
      */
     getSVGPath(scale: { x: number, y: number }, trans: { x: number, y: number }): string {
         const scale_ = scale ?? {
@@ -1163,22 +1185,18 @@ export class Potrace {
 }
 
 /**
- * Potrace options
+ * Potrace options.
  *
- * @typedef {Object} Potrace~Options
- * @property {*}       [turnPolicy]   - how to resolve ambiguities in path decomposition (default Potrace.TURNPOLICY_MINORITY)
- * @property {Number}  [turdSize]     - suppress speckles of up to this size (default 2)
- * @property {Number}  [alphaMax]     - corner threshold parameter (default 1)
- * @property {Boolean} [optCurve]     - curve optimization (default true)
- * @property {Number}  [optTolerance] - curve optimization tolerance (default 0.2)
- * @property {Number}  [threshold]    - threshold below which color is considered black (0..255, default Potrace.THRESHOLD_AUTO)
- * @property {Boolean} [blackOnWhite] - specifies colors by which side from threshold should be traced (default true)
- * @property {string}  [color]        - foreground color (default: 'auto' (black or white)) Will be ignored when exporting as <symbol>
- * @property {string}  [background]   - background color (default: 'transparent') Will be ignored when exporting as <symbol>
- */
-
-/**
- * Jimp module
- * @external Jimp
- * @see https://www.npmjs.com/package/jimp
+ * @typedef {object} PotraceOptions
+ * @property {string} [turnPolicy] - How to resolve ambiguities in path decomposition. Defaults to `Potrace.TURNPOLICY_MINORITY`.
+ * @property {number} [turdSize] - Suppress speckles up to this size. Defaults to `2`.
+ * @property {number} [alphaMax] - Corner threshold parameter. Defaults to `1`.
+ * @property {boolean} [optCurve] - Whether curve optimization is enabled. Defaults to `true`.
+ * @property {number} [optTolerance] - Curve optimization tolerance. Defaults to `0.2`.
+ * @property {number} [threshold] - Threshold below which luminance is considered black, from `0` to `255`, or `Potrace.THRESHOLD_AUTO`.
+ * @property {boolean} [blackOnWhite] - Whether darker pixels are traced as foreground. Defaults to `true`.
+ * @property {string} [color] - Foreground color. Defaults to `Potrace.COLOR_AUTO`; ignored when exporting as `<symbol>`.
+ * @property {string} [background] - Background color. Defaults to `Potrace.COLOR_TRANSPARENT`; ignored when exporting as `<symbol>`.
+ * @property {number} [width] - Output SVG width. Defaults to the source image width.
+ * @property {number} [height] - Output SVG height. Defaults to the source image height.
  */
