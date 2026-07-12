@@ -5,6 +5,7 @@ import { Path } from "./base/path";
 import { Quad } from "./base/quad";
 import { Sum } from "./base/sum";
 import { Opti } from "./base/opti";
+import { SimplifyOptions, SimplifyResult, SvgPathSimplifier } from "./svg-path-simplifier";
 import * as utils from "./utils";
 
 export interface PotraceOptions {
@@ -1192,6 +1193,18 @@ export class Potrace {
         return this._pathlist.map(function (path): string {
             return utils.renderCurve(path.curve, scale_, trans);
         }).join(' ')
+    }
+
+    /**
+     * Generates simplified SVG path data and simplification statistics.
+     *
+     * @param {{x: number, y: number}} [scale] - Optional scale applied to path coordinates. Defaults to configured output scaling or `{x: 1, y: 1}`.
+     * @param {{x: number, y: number}} [trans={x: 0, y: 0}] - Translation applied to path coordinates.
+     * @param {SimplifyOptions} [options={}] - Optional simplification settings.
+     * @returns {SimplifyResult} Simplified path data and statistics.
+     */
+    getSimplifiedSVGPath(scale?: { x: number, y: number }, trans: { x: number, y: number } = { x: 0, y: 0 }, options: SimplifyOptions = {}): SimplifyResult {
+        return SvgPathSimplifier.simplifyPath(this.getSVGPath(scale, trans), options);
     }
 }
 

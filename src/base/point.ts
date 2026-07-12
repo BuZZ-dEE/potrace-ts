@@ -1,10 +1,18 @@
 /**
+ * Structural two-dimensional point shape.
+ */
+export interface PointLike {
+    x: number;
+    y: number;
+}
+
+/**
  * Two-dimensional point.
  *
  * @param {number} [x=0] - X coordinate.
  * @param {number} [y=0] - Y coordinate.
  */
-export class Point {
+export class Point implements PointLike {
     x: number;
     y: number;
     constructor(x?: number, y?: number) {

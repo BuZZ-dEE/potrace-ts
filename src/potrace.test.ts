@@ -43,6 +43,21 @@ describe("Potrace", () => {
         expect(potrace.getPathTag()).toMatch(/^<path d=".+" stroke="none" fill="black" fill-rule="evenodd"\/>$/);
     });
 
+    it("generates simplified SVG path data with statistics", () => {
+        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), jest.fn(), {
+            threshold: 128,
+        });
+
+        const simplified = potrace.getSimplifiedSVGPath(undefined, undefined, {
+            flattenTolerance: 0.5,
+            simplifyTolerance: 0.1,
+        });
+
+        expect(simplified.d).toEqual(expect.any(String));
+        expect(simplified.stats.pointsBefore).toBeGreaterThanOrEqual(simplified.stats.pointsAfter);
+        expect(simplified.stats.subPaths).toBeGreaterThanOrEqual(0);
+    });
+
     it("validates supported option values", () => {
         const image = createImageData(1, 1, [255, 255, 255, 255]);
 

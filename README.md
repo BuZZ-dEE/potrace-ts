@@ -21,7 +21,7 @@ pnpm add @buzz-dee/potrace-ts
 ## Usage
 
 ```typescript
-import { Potrace } from "@buzz-dee/potrace-ts";
+import { Potrace, SvgPathSimplifier } from "@buzz-dee/potrace-ts";
 
 const imageData = canvas.getContext("2d")!.getImageData(0, 0, width, height);
 
@@ -34,6 +34,11 @@ const potrace = new Potrace(imageData, () => {}, {
 const svg = potrace.getSVG();
 const pathData = potrace.getSVGPath({ x: 1, y: 1 }, { x: 0, y: 0 });
 const defaultPathData = potrace.getSVGPath();
+const simplified = potrace.getSimplifiedSVGPath(undefined, undefined, {
+  flattenTolerance: 0.5,
+  simplifyTolerance: 0.1,
+});
+const simplifiedPath = SvgPathSimplifier.simplifyPath("M 0 0 L 10 0 L 20 0");
 ```
 
 ## API
@@ -50,9 +55,12 @@ Creates a Potrace instance from `ImageData`.
 
 - `getSVG(scale?)`: returns a complete SVG document string. If `scale` is omitted, it uses configured `width` and `height` scaling, or `{ x: 1, y: 1 }`.
 - `getSVGPath(scale?, trans?)`: returns SVG path data only. If `scale` is omitted, it uses configured `width` and `height` scaling, or `{ x: 1, y: 1 }`. If `trans` is omitted, it defaults to `{ x: 0, y: 0 }`.
+- `getSimplifiedSVGPath(scale?, trans?, options?)`: returns simplified SVG path data and simplification statistics. `scale` and `trans` use the same defaults as `getSVGPath`.
 - `getPathTag(fillColor?, scale?, trans?)`: returns a `<path>` tag.
 - `getSymbol(id)`: returns an SVG `<symbol>` tag.
 - `setParameters(options)`: updates tracing/output parameters.
+
+`SvgPathSimplifier.simplifyPath(d, options?)` can also simplify arbitrary SVG path data directly.
 
 Scale and translation values use this shape:
 
@@ -67,6 +75,31 @@ const path = potrace.getSVGPath();
 const scaledPath = potrace.getSVGPath({ x: 2, y: 2 });
 const movedPath = potrace.getSVGPath(undefined, { x: 10, y: 20 });
 const scaledAndMovedPath = potrace.getSVGPath({ x: 2, y: 2 }, { x: 10, y: 20 });
+```
+
+Simplification options use this shape:
+
+```typescript
+interface SimplifyOptions {
+  /** Resolution used while flattening curves. */
+  flattenTolerance?: number;
+  /** Ramer-Douglas-Peucker epsilon used to simplify flattened points. */
+  simplifyTolerance?: number;
+}
+```
+
+The simplified path result contains the path data and statistics:
+
+```typescript
+interface SimplifyResult {
+  d: string;
+  stats: {
+    pointsBefore: number;
+    pointsAfter: number;
+    reductionPercent: number;
+    subPaths: number;
+  };
+}
 ```
 
 ### Options
