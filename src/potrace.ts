@@ -8,16 +8,27 @@ import { Opti } from "./base/opti";
 import * as utils from "./utils";
 
 export interface PotraceOptions {
+    /** How to resolve ambiguities in path decomposition. Defaults to `Potrace.TURNPOLICY_MINORITY`. */
     turnPolicy?: string,
+    /** Suppress speckles up to this size. Defaults to `2`. */
     turdSize?: number,
+    /** Corner threshold parameter. Defaults to `1`. */
     alphaMax?: number,
+    /** Whether curve optimization is enabled. Defaults to `true`. */
     optCurve?: boolean,
+    /** Curve optimization tolerance. Defaults to `0.2`. */
     optTolerance?: number,
+    /** Threshold below which luminance is considered black, from `0` to `255`, or `Potrace.THRESHOLD_AUTO`. */
     threshold?: number,
+    /** Whether darker pixels are traced as foreground. Defaults to `true`. */
     blackOnWhite?: boolean,
+    /** Foreground color. Defaults to `Potrace.COLOR_AUTO`; ignored when exporting as `<symbol>`. */
     color?: string,
+    /** Background color. Defaults to `Potrace.COLOR_TRANSPARENT`; ignored when exporting as `<symbol>`. */
     background?: string,
+    /** Output SVG width. Defaults to the source image width. */
     width?: number,
+    /** Output SVG height. Defaults to the source image height. */
     height?: number
 }
 
