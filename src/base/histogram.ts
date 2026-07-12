@@ -17,7 +17,7 @@ const COLOR_RANGE_END = COLOR_DEPTH - 1;
  * @returns {*}
  * @private
  */
-function index(x: number, y: number) {
+function index(x: number, y: number): number {
     return COLOR_DEPTH * x + y;
 }
 
@@ -47,6 +47,23 @@ export enum HistogramMode {
     MODE_B = 'b'
 }
 
+type HistogramArray = Uint8Array | Uint16Array | Uint32Array;
+
+interface HistogramStats {
+    levels: {
+        mean: number;
+        median: number | null;
+        stdDev: number;
+        unique: number;
+    };
+    pixelsPerLevel: {
+        mean: number;
+        median: number;
+        peak: number;
+    };
+    pixels: number;
+}
+
 /**
  * 1D Histogram
  *
@@ -56,11 +73,11 @@ export enum HistogramMode {
  * @protected
  */
 export class Histogram {
-    data: Uint8Array | Uint16Array | Uint32Array;
+    data: HistogramArray;
     pixels: number;
     _sortedIndexes?: Array<number>;
-    _cachedStats: { [key: string]: any } = {};
-    _lookupTableH?: any;
+    _cachedStats: { [key: string]: HistogramStats } = {};
+    _lookupTableH?: Float64Array;
 
     constructor(imageSource: number | Bitmap | ImageData, mode: HistogramMode = HistogramMode.MODE_LUMINANCE) {
 
@@ -88,7 +105,7 @@ export class Histogram {
      * @returns {Uint8Array|Uint16Array|Uint32Array}
      * @private
      */
-    _createArray(imageSize: number) {
+    _createArray(imageSize: number): HistogramArray {
         const  ArrayType = imageSize <= Math.pow(2, 8) ? Uint8Array
             : imageSize <= Math.pow(2, 16) ? Uint16Array : Uint32Array;
 
@@ -103,7 +120,7 @@ export class Histogram {
      * @param mode
      * @private
      */
-    _collectValuesJimp(source: ImageData, mode: HistogramMode) {
+    _collectValuesJimp(source: ImageData, mode: HistogramMode): HistogramArray {
         const  pixelData = source.data;
         const  data = this._createArray(source.width * source.height);
 
@@ -128,7 +145,7 @@ export class Histogram {
      * @param {Bitmap} source
      * @private
      */
-    _collectValuesBitmap(source: Bitmap) {
+    _collectValuesBitmap(source: Bitmap): HistogramArray {
         const  data = this._createArray(source.size);
         const  len = source.data.length;
         let  color;
@@ -146,7 +163,7 @@ export class Histogram {
      * @returns {*}
      * @private
      */
-    _getSortedIndexes(refresh?: boolean) {
+    _getSortedIndexes(refresh?: boolean): Array<number> {
         if (!refresh && this._sortedIndexes) {
             return this._sortedIndexes;
         }
@@ -159,7 +176,7 @@ export class Histogram {
             indexes[i] = i;
         }
 
-        indexes.sort(function (a, b) {
+        indexes.sort(function (a, b): number {
             return data[a] > data[b] ? 1 : data[a] < data[b] ? -1 : 0;
         });
 
@@ -174,7 +191,7 @@ export class Histogram {
      * @returns {Float64Array}
      * @private
      */
-    _thresholdingBuildLookupTable() {
+    _thresholdingBuildLookupTable(): Float64Array {
         const  P = new Float64Array(COLOR_DEPTH * COLOR_DEPTH);
         const  S = new Float64Array(COLOR_DEPTH * COLOR_DEPTH);
         const  H = new Float64Array(COLOR_DEPTH * COLOR_DEPTH);
@@ -229,7 +246,7 @@ export class Histogram {
      * @param [levelMax=255] - histogram segment end
      * @returns {number[]}
        */
-    multilevelThresholding(amount: number, levelMin?: number, levelMax?: number) {
+    multilevelThresholding(amount: number, levelMin?: number, levelMax?: number): Array<number> {
         const normalizedLevelMin = normalizeMinMax(levelMin, levelMax);
         levelMax = normalizedLevelMin[1];
         levelMin = normalizedLevelMin[0];
@@ -243,16 +260,16 @@ export class Histogram {
             this._thresholdingBuildLookupTable();
         }
 
-        const  H = this._lookupTableH;
+        const  H = this._lookupTableH!;
 
-        let  colorStops = null;
+        let  colorStops: Array<number> | null = null;
         let  maxSig = 0;
 
         if (amount > 4) {
             console.log('[Warning]: Threshold computation for more than 5 levels may take a long time');
         }
 
-        const iterateRecursive = function (startingPoint: number, prevVariance?: number, indexes?: Array<number>, previousDepth?: number) {
+        const iterateRecursive = function (startingPoint: number, prevVariance?: number, indexes?: Array<number>, previousDepth?: number): void {
             startingPoint = (startingPoint || 0) + 1;
             prevVariance = prevVariance || 0;
             indexes = indexes || (new Array(amount));
@@ -292,7 +309,7 @@ export class Histogram {
      * @param {number} [levelMax]
      * @returns {null|number}
      */
-    autoThreshold(levelMin?: number, levelMax?: number) {
+    autoThreshold(levelMin?: number, levelMax?: number): number | null {
         const  value = this.multilevelThresholding(1, levelMin, levelMax);
         return value.length ? value[0] : null;
     }
@@ -305,7 +322,7 @@ export class Histogram {
      * @param [tolerance=1]
      * @returns {number}
      */
-    getDominantColor(levelMin: number, levelMax: number, tolerance?: number) {
+    getDominantColor(levelMin: number, levelMax: number, tolerance?: number): number {
         const normalized = normalizeMinMax(levelMin, levelMax);
         levelMax = normalized[1];
         levelMin = normalized[0];
@@ -352,7 +369,7 @@ export class Histogram {
      * @param {Boolean} [refresh=false] - if cached result can be returned
      * @returns {{levels: {mean: (number|*), median: *, stdDev: number, unique: number}, pixelsPerLevel: {mean: (number|*), median: (number|*), peak: number}, pixels: number}}
      */
-    getStats(levelMin: number, levelMax: number, refresh?: boolean) {
+    getStats(levelMin: number, levelMax: number, refresh?: boolean): HistogramStats {
         const normalized = normalizeMinMax(levelMin, levelMax);
         levelMax = normalized[1];
         levelMin = normalized[0];

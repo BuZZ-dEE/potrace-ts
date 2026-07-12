@@ -34,7 +34,7 @@ export class Bitmap {
      * @param {Number|Point} x - index, point or x
      * @param {Number} [y]
      */
-    getValueAt(x: number, y: number) {
+    getValueAt(x: number, y: number): number {
         const index = this.pointToIndex(x, y);
         return this.data[index];
     }
@@ -45,7 +45,7 @@ export class Bitmap {
      * @param {Number} index
      * @returns {Point}
      */
-    indexToPoint(index: number, point?: Point) {
+    indexToPoint(index: number, point?: Point): Point {
         point = point ?? new Point();
 
         if (utils.between(index, 0, this.size)) {
@@ -68,7 +68,7 @@ export class Bitmap {
      */
     pointToIndex(point: Point): number;
     pointToIndex(x: number, y: number): number;
-    pointToIndex(pointOrX: Point | number, y?: number) {
+    pointToIndex(pointOrX: Point | number, y?: number): number {
         let _x = pointOrX,
             _y = y || 0;
 
@@ -90,7 +90,7 @@ export class Bitmap {
      * @param {Function} [iterator] optional callback, used for processing pixel value. Accepted arguments: value, index
      * @returns {Bitmap}
      */
-    copy(iterator?: (value: number, index: number) => number) {
+    copy(iterator?: (value: number, index: number) => number): Bitmap {
         const bm = new Bitmap(this.width, this.height),
             iteratorPresent = typeof iterator === 'function';
             // i;
@@ -105,7 +105,7 @@ export class Bitmap {
         return bm;
     }
 
-    histogram() {
+    histogram(): Histogram {
         if (this._histogram) {
             return this._histogram;
         }

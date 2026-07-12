@@ -97,7 +97,7 @@ export class Potrace {
      * Creating a new {@link Path} for every group of black pixels.
      * @private
      */
-    _bmToPathlist() {
+    _bmToPathlist(): void {
         const self = this;
         let threshold = this._params.threshold;
         const blackOnWhite = this._params.blackOnWhite;
@@ -107,9 +107,9 @@ export class Potrace {
             threshold = this._luminanceData.histogram().autoThreshold() || 128;
         }
 
-        const blackMap = blackOnWhite ? this._luminanceData.copy(function (lum, i) {
+        const blackMap = blackOnWhite ? this._luminanceData.copy(function (lum, i): number {
             return lum > threshold ? 0 : 1;
-        }) : this._luminanceData.copy(function (lum, i) {
+        }) : this._luminanceData.copy(function (lum, i): number {
             return lum < threshold ? 0 : 1;
         });
         const saveBlackMap = blackMap.copy();
@@ -134,7 +134,7 @@ export class Potrace {
             return false;
         }
 
-        function majority(x: number, y: number) {
+        function majority(x: number, y: number): number {
             let i, a, ct;
 
             for (i = 2; i < 5; i++) {
@@ -215,7 +215,7 @@ export class Potrace {
             return path;
         }
 
-        function xorPath(path: Path) {
+        function xorPath(path: Path): void {
             let y1 = path.pt[0].y;
 
             for (let i = 1, len = path.len; i < len; i++) {
@@ -252,10 +252,10 @@ export class Potrace {
      * Processes path list created by _bmToPathlist method creating and optimizing {@link Curve}'s
      * @private
      */
-    _processPath() {
+    _processPath(): void {
         const self = this;
 
-        function calcSums(path: Path & { x0?: number, y0?: number, sums?: Array<Sum> }) {
+        function calcSums(path: Path & { x0?: number, y0?: number, sums?: Array<Sum> }): void {
             let i, x, y;
             path.x0 = path.pt[0].x;
             path.y0 = path.pt[0].y;
@@ -271,7 +271,7 @@ export class Potrace {
             }
         }
 
-        function calcLon(path: Path & { lon?: Array<number> }) {
+        function calcLon(path: Path & { lon?: Array<number> }): void {
 
             const n = path.len,
                 pt = path.pt,
@@ -388,9 +388,9 @@ export class Potrace {
             }
         }
 
-        function bestPolygon(path: Path & { lon?: Array<number>, m?: number, po?: Array<number> }) {
+        function bestPolygon(path: Path & { lon?: Array<number>, m?: number, po?: Array<number> }): void {
 
-            function penalty3(path: Path & { sums?: Array<Sum> }, i: number, j: number) {
+            function penalty3(path: Path & { sums?: Array<Sum> }, i: number, j: number): number {
 
                 const n = path.len, pt = path.pt, sums = path.sums!;
                 let x, y, xy, x2, y2,
@@ -499,9 +499,9 @@ export class Potrace {
             }
         }
 
-        function adjustVertices(path: Path & { m?: number, po?: Array<number>, x0?: number, y0?: number }) {
+        function adjustVertices(path: Path & { m?: number, po?: Array<number>, x0?: number, y0?: number }): void {
 
-            function pointslope(path: Path & { sums?: Array<Sum> }, i: number, j: number, ctr: Point, dir: Point) {
+            function pointslope(path: Path & { sums?: Array<Sum> }, i: number, j: number, ctr: Point, dir: Point): void {
 
                 const n = path.len, sums = path.sums!;
                 let a, c, l, r = 0;
@@ -698,7 +698,7 @@ export class Potrace {
             }
         }
 
-        function reverse(path: Path) {
+        function reverse(path: Path): void {
             const curve = path.curve, m = curve.n, v = curve.vertex;
 
             for (let i = 0, j = m - 1; i < j; i++, j--) {
@@ -708,7 +708,7 @@ export class Potrace {
             }
         }
 
-        function smooth(path: Path) {
+        function smooth(path: Path): void {
             const m = path.curve.n, curve = path.curve;
 
             let i, j, k, dd, denom, alpha,
@@ -753,9 +753,9 @@ export class Potrace {
             curve.alphaCurve = 1;
         }
 
-        function optiCurve(path: Path) {
+        function optiCurve(path: Path): void {
 
-            function opti_penalty(path: Path, i: number, j: number, res: Opti, opttolerance: number, convc: Array<number>, areac: Array<number>) {
+            function opti_penalty(path: Path, i: number, j: number, res: Opti, opttolerance: number, convc: Array<number>, areac: Array<number>): number {
                 const m = path.curve.n, curve = path.curve, vertex = curve.vertex;
                 let k, k1, k2,
                     area, d, d1, d2,
@@ -1008,7 +1008,7 @@ export class Potrace {
      * @param params
      * @private
      */
-    _validateParameters(params: PotraceOptions) {
+    _validateParameters(params: PotraceOptions): void {
         if (params && params.turnPolicy && Potrace.SUPPORTED_TURNPOLICY_VALUES.indexOf(params.turnPolicy) === -1) {
             const goodVals = '\'' + Potrace.SUPPORTED_TURNPOLICY_VALUES.join('\', \'') + '\'';
 
@@ -1026,7 +1026,7 @@ export class Potrace {
         }
     }
 
-    _processLoadedImage(image: ImageData) {
+    _processLoadedImage(image: ImageData): Bitmap {
         const bitmap = new Bitmap(image.width, image.height);
         const pixels = image.data;
 
@@ -1051,7 +1051,7 @@ export class Potrace {
      * Sets algorithm parameters
      * @param {Potrace~Options} newParams
      */
-    setParameters(newParams: any) {
+    setParameters(newParams: any): void {
         let key, tmpOldVal;
 
         this._validateParameters(newParams);
@@ -1075,7 +1075,7 @@ export class Potrace {
      * @param {String} [fillColor] - overrides color from parameters
      * @returns {String}
      */
-    getPathTag(fillColor?: string, scale: { x: number, y: number } = { x: 1, y: 1 }, trans: { x: number, y: number } = { x: 0, y: 0 }) {
+    getPathTag(fillColor?: string, scale: { x: number, y: number } = { x: 1, y: 1 }, trans: { x: number, y: number } = { x: 0, y: 0 }): string {
         fillColor = arguments.length === 0 ? this._params.color : fillColor;
 
         if (fillColor === Potrace.COLOR_AUTO) {
@@ -1090,7 +1090,7 @@ export class Potrace {
 
         let tag = '<path d="';
 
-        tag += this._pathlist.map(function (path) {
+        tag += this._pathlist.map(function (path): string {
             return utils.renderCurve(path.curve, scale, trans);
         }).join(' ');
 
@@ -1106,7 +1106,7 @@ export class Potrace {
      * @param id
      * @returns {string}
      */
-    getSymbol(id: string) {
+    getSymbol(id: string): string {
         return '<symbol ' +
             'viewBox="0 0 ' + this._luminanceData!.width + ' ' + this._luminanceData!.height + '" ' +
             'id="' + id + '">' +
@@ -1118,7 +1118,7 @@ export class Potrace {
      * Generates SVG image
      * @returns {String}
      */
-    getSVG(scale?: { x: number, y: number }) {
+    getSVG(scale?: { x: number, y: number }): string {
         const width = this._params.width || this._luminanceData!.width;
         const height = this._params.height || this._luminanceData!.height;
         const scale_ = scale ?? {
@@ -1142,7 +1142,7 @@ export class Potrace {
      * Generates SVG path
      * @returns {String}
      */
-    getSVGPath(scale: { x: number, y: number }, trans: { x: number, y: number }) {
+    getSVGPath(scale: { x: number, y: number }, trans: { x: number, y: number }): string {
         const scale_ = scale ?? {
             x: this._params.width ? this._params.width / this._luminanceData!.width : 1,
             y: this._params.height ? this._params.height / this._luminanceData!.height : 1,
@@ -1153,7 +1153,7 @@ export class Potrace {
             this._processPath();
             this._processed = true;
         }
-        return this._pathlist.map(function (path) {
+        return this._pathlist.map(function (path): string {
             return utils.renderCurve(path.curve, scale_, trans);
         }).join(' ')
     }

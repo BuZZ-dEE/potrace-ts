@@ -4,7 +4,7 @@ import { Quad } from "./base/quad";
 
 const attrRegexps: { [key: string]: RegExp } = {};
 
-export function getAttrRegexp(attrName: string) {
+export function getAttrRegexp(attrName: string): RegExp {
     if (attrRegexps[attrName]) {
         return attrRegexps[attrName];
     }
@@ -46,11 +46,11 @@ export function cyclic(a: number, b: number, c: number): boolean {
     }
 }
 
-export function sign(i: number) {
+export function sign(i: number): number {
     return i > 0 ? 1 : i < 0 ? -1 : 0;
 }
 
-export function quadform(Q: Quad, w: Point) {
+export function quadform(Q: Quad, w: Point): number {
     const v = new Array(3);
     let i, j, sum;
 
@@ -67,7 +67,7 @@ export function quadform(Q: Quad, w: Point) {
     return sum;
 }
 
-export function interval(lambda: number, a: Point, b: Point) {
+export function interval(lambda: number, a: Point, b: Point): Point {
     const res = new Point();
 
     res.x = a.x + lambda * (b.x - a.x);
@@ -75,7 +75,7 @@ export function interval(lambda: number, a: Point, b: Point) {
     return res;
 }
 
-export function dorth_infty(p0: Point, p2: Point) {
+export function dorth_infty(p0: Point, p2: Point): Point {
     const r = new Point();
 
     r.y = sign(p2.x - p0.x);
@@ -84,13 +84,13 @@ export function dorth_infty(p0: Point, p2: Point) {
     return r;
 }
 
-export function ddenom(p0: Point, p2: Point) {
+export function ddenom(p0: Point, p2: Point): number {
     const r = dorth_infty(p0, p2);
 
     return r.y * (p2.x - p0.x) - r.x * (p2.y - p0.y);
 }
 
-export function dpara(p0: Point, p1: Point, p2: Point) {
+export function dpara(p0: Point, p1: Point, p2: Point): number {
     const x1 = p1.x - p0.x;
     const y1 = p1.y - p0.y;
     const x2 = p2.x - p0.x;
@@ -99,7 +99,7 @@ export function dpara(p0: Point, p1: Point, p2: Point) {
     return x1 * y2 - x2 * y1;
 }
 
-export function cprod(p0: Point, p1: Point, p2: Point, p3: Point) {
+export function cprod(p0: Point, p1: Point, p2: Point, p3: Point): number {
     const x1 = p1.x - p0.x;
     const y1 = p1.y - p0.y;
     const x2 = p3.x - p2.x;
@@ -108,7 +108,7 @@ export function cprod(p0: Point, p1: Point, p2: Point, p3: Point) {
     return x1 * y2 - x2 * y1;
 }
 
-export function iprod(p0: Point, p1: Point, p2: Point) {
+export function iprod(p0: Point, p1: Point, p2: Point): number {
     const x1 = p1.x - p0.x;
     const y1 = p1.y - p0.y;
     const x2 = p2.x - p0.x;
@@ -117,7 +117,7 @@ export function iprod(p0: Point, p1: Point, p2: Point) {
     return x1 * x2 + y1 * y2;
 }
 
-export function iprod1(p0: Point, p1: Point, p2: Point, p3: Point) {
+export function iprod1(p0: Point, p1: Point, p2: Point, p3: Point): number {
     const x1 = p1.x - p0.x;
     const y1 = p1.y - p0.y;
     const x2 = p3.x - p2.x;
@@ -126,24 +126,24 @@ export function iprod1(p0: Point, p1: Point, p2: Point, p3: Point) {
     return x1 * x2 + y1 * y2;
 }
 
-export function ddist(p: Point, q: Point) {
+export function ddist(p: Point, q: Point): number {
     return Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
 }
 
 
-export function luminance(r: number, g: number, b: number) {
+export function luminance(r: number, g: number, b: number): number {
     return Math.round(0.2126 * r + 0.7153 * g + 0.0721 * b);
 }
 
-export function between(val: number, min: number, max: number) {
+export function between(val: number, min: number, max: number): boolean {
     return val >= min && val <= max;
 }
 
-export function clamp(val: number, min: number, max: number) {
+export function clamp(val: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, val));
 }
 
-export function isNumber(val: any) {
+export function isNumber(val: any): boolean {
     return typeof val === 'number';
 }
 
@@ -157,7 +157,7 @@ export const setHtmlAttr = setHtmlAttribute
  * @param {Number} [scale]
  * @returns {string}
  */
-export function renderCurve(curve: Curve, scale: { x: number, y: number }, trans: { x: number, y: number }) {
+export function renderCurve(curve: Curve, scale: { x: number, y: number }, trans: { x: number, y: number }): string {
 
     const startingPoint = curve.c[(curve.n - 1) * 3 + 2];
 
@@ -167,7 +167,7 @@ export function renderCurve(curve: Curve, scale: { x: number, y: number }, trans
         + fixed(startingPoint.y * scale.y + trans.y)
     ];
 
-    curve.tag.forEach(function (tag, i) {
+    curve.tag.forEach(function (tag, i): void {
         const i3 = i * 3;
         const p0 = curve.c[i3];
         const p1 = curve.c[i3 + 1];
@@ -192,7 +192,7 @@ export function renderCurve(curve: Curve, scale: { x: number, y: number }, trans
     return path.join(' ');
 }
 
-export function bezier(t: number, p0: Point, p1: Point, p2: Point, p3: Point) {
+export function bezier(t: number, p0: Point, p1: Point, p2: Point, p3: Point): Point {
     const s = 1 - t, res = new Point();
 
     res.x = s * s * s * p0.x + 3 * (s * s * t) * p1.x + 3 * (t * t * s) * p2.x + t * t * t * p3.x;
@@ -201,7 +201,7 @@ export function bezier(t: number, p0: Point, p1: Point, p2: Point, p3: Point) {
     return res;
 }
 
-export function tangent(p0: Point, p1: Point, p2: Point, p3: Point, q0: Point, q1: Point) {
+export function tangent(p0: Point, p1: Point, p2: Point, p3: Point, q0: Point, q1: Point): number {
     const A = cprod(p0, p1, q0, q1);
     const B = cprod(p1, p2, q0, q1);
     const C = cprod(p2, p3, q0, q1);
