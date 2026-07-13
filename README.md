@@ -25,7 +25,7 @@ import { Potrace, SvgPathSimplifier } from "@buzz-dee/potrace-ts";
 
 const imageData = canvas.getContext("2d")!.getImageData(0, 0, width, height);
 
-const potrace = new Potrace(imageData, () => {}, {
+const potrace = new Potrace(imageData, {
   threshold: Potrace.THRESHOLD_AUTO,
   turdSize: 2,
   optCurve: true,
@@ -43,12 +43,11 @@ const simplifiedPath = SvgPathSimplifier.simplifyPath("M 0 0 L 10 0 L 20 0");
 
 ## API
 
-### `new Potrace(imageData, callback, options?)`
+### `new Potrace(imageData, options?)`
 
 Creates a Potrace instance from `ImageData`.
 
 - `imageData`: RGBA image data to trace.
-- `callback`: called after image data has been processed.
 - `options`: optional tracing and output settings.
 
 ### Methods

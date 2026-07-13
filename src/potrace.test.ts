@@ -11,16 +11,8 @@ function createImageData(width: number, height: number, rgba: [number, number, n
 }
 
 describe("Potrace", () => {
-    it("calls the constructor callback after processing image data", () => {
-        const callback = jest.fn();
-
-        new Potrace(createImageData(1, 1, [255, 255, 255, 255]), callback);
-
-        expect(callback).toHaveBeenCalledTimes(1);
-    });
-
     it("generates an SVG with configured dimensions and background", () => {
-        const potrace = new Potrace(createImageData(2, 3, [255, 255, 255, 255]), jest.fn(), {
+        const potrace = new Potrace(createImageData(2, 3, [255, 255, 255, 255]), {
             background: "white",
             color: "black",
             width: 20,
@@ -36,7 +28,7 @@ describe("Potrace", () => {
     });
 
     it("traces opaque black pixels into a non-empty path", () => {
-        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), jest.fn(), {
+        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), {
             threshold: 128,
         });
 
@@ -44,7 +36,7 @@ describe("Potrace", () => {
     });
 
     it("generates simplified SVG path data with statistics", () => {
-        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), jest.fn(), {
+        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), {
             threshold: 128,
         });
 
@@ -61,8 +53,8 @@ describe("Potrace", () => {
     it("validates supported option values", () => {
         const image = createImageData(1, 1, [255, 255, 255, 255]);
 
-        expect(() => new Potrace(image, jest.fn(), { turnPolicy: "diagonal" })).toThrow("Bad turnPolicy value");
-        expect(() => new Potrace(image, jest.fn(), { threshold: 256 })).toThrow("Bad threshold value");
-        expect(() => new Potrace(image, jest.fn(), { optCurve: "yes" as unknown as boolean })).toThrow("'optCurve' must be Boolean");
+        expect(() => new Potrace(image, { turnPolicy: "diagonal" })).toThrow("Bad turnPolicy value");
+        expect(() => new Potrace(image, { threshold: 256 })).toThrow("Bad threshold value");
+        expect(() => new Potrace(image, { optCurve: "yes" as unknown as boolean })).toThrow("'optCurve' must be Boolean");
     });
 });

@@ -53,7 +53,6 @@ type PotraceParameterValue = _PotraceOptions[keyof _PotraceOptions] | undefined;
  * Traces bitmap image data and renders it as SVG path data or SVG markup.
  *
  * @param {ImageData} target - Source RGBA image data.
- * @param {(error?: Error) => void} callback - Called after the image data has been converted to luminance data.
  * @param {PotraceOptions} [options] - Optional tracing and output settings.
  */
 export class Potrace {
@@ -63,10 +62,9 @@ export class Potrace {
     private _processed: boolean;
     private _params: _PotraceOptions;
 
-    constructor(target: ImageData, callback: (error?: Error) => void, options?: PotraceOptions) {
+    constructor(target: ImageData, options?: PotraceOptions) {
         this._pathlist = [];
 
-        // this._imageLoadingIdentifier = null;
         this._processed = false;
 
         this._params = {
@@ -88,8 +86,6 @@ export class Potrace {
         }
 
         this._luminanceData = this._processLoadedImage(target);
-        callback.call(this);
-        // this._luminanceData = this.loadImage(target, callback)
     }
 
     static COLOR_AUTO = 'auto';
