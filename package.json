@@ -25,7 +25,7 @@
     "dev": "tsc -w",
     "build": "rolldown --config --cleanDir && tsc --emitDeclarationOnly",
     "test": "jest",
-    "lint": "eslint --ext .js,.ts,.vue src"
+    "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {
     "@types/chai": "5.2.3",
