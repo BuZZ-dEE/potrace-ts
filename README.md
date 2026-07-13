@@ -151,14 +151,14 @@ This project uses pnpm.
 ```bash
 pnpm install
 pnpm build
-pnpm eslint
+pnpm lint
 pnpm test
 ```
 
 Available scripts:
 
-- `pnpm build`: builds the package with Rollup.
-- `pnpm eslint`: lints source files.
+- `pnpm build`: builds the package with Rolldown.
+- `pnpm lint`: lints source files.
 - `pnpm test`: runs the Jest test suite.
 - `pnpm dev`: runs TypeScript in watch mode.
 
