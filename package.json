@@ -23,7 +23,8 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "build": "rolldown --config --cleanDir && tsc --emitDeclarationOnly",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "pnpm clean && rolldown --config && tsc --emitDeclarationOnly",
     "test": "jest",
     "lint": "eslint --ext .js,.ts src"
   },
