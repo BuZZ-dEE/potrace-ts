@@ -1,6 +1,6 @@
 {
   "name": "@buzz-dee/potrace-ts",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": false,
   "type": "module",
   "description": "typescript potrace module",
