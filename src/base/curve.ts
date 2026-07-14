@@ -1,5 +1,7 @@
 import { Point } from "./point";
 
+export type CurveTag = "CORNER" | "CURVE";
+
 /**
  * Curve data produced by the Potrace path processing pipeline.
  *
@@ -8,7 +10,7 @@ import { Point } from "./point";
  */
 export class Curve {
     n: number;
-    tag: Array<string>;
+    tag: Array<CurveTag>;
     c: Array<Point>;
     alphaCurve: number;
     vertex: Array<Point>;
