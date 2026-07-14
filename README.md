@@ -5,6 +5,7 @@ A TypeScript implementation of Potrace for converting bitmap image data to scala
 [![CI](https://github.com/BuZZ-dEE/potrace-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/BuZZ-dEE/potrace-ts/actions/workflows/ci.yml)
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/BuZZ-dEE/potrace-ts)
 [![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/%40buzz-dee%2Fpotrace-ts)](https://libraries.io/npm/%40buzz-dee%2Fpotrace-ts)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/%40buzz-dee%2Fpotrace-ts)](https://bundlephobia.com/package/%40buzz-dee%2Fpotrace-ts)
 [![npm](https://img.shields.io/npm/v/%40buzz-dee%2Fpotrace-ts)](https://www.npmjs.com/package/%40buzz-dee%2Fpotrace-ts)
 [![NPM](https://img.shields.io/npm/l/%40buzz-dee%2Fpotrace-ts)](https://github.com/BuZZ-dEE/potrace-ts/blob/main/LICENSE.txt)
@@ -28,9 +29,9 @@ pnpm add @buzz-dee/potrace-ts
 ## Usage
 
 ```typescript
-import { Potrace, SvgPathSimplifier } from "@buzz-dee/potrace-ts";
+import {Potrace, SvgPathSimplifier} from '@buzz-dee/potrace-ts';
 
-const imageData = canvas.getContext("2d")!.getImageData(0, 0, width, height);
+const imageData = canvas.getContext('2d')!.getImageData(0, 0, width, height);
 
 const potrace = new Potrace(imageData, {
   threshold: Potrace.THRESHOLD_AUTO,
@@ -39,13 +40,13 @@ const potrace = new Potrace(imageData, {
 });
 
 const svg = potrace.getSVG();
-const pathData = potrace.getSVGPath({ x: 1, y: 1 }, { x: 0, y: 0 });
+const pathData = potrace.getSVGPath({x: 1, y: 1}, {x: 0, y: 0});
 const defaultPathData = potrace.getSVGPath();
 const simplified = potrace.getSimplifiedSVGPath(undefined, undefined, {
   flattenTolerance: 0.5,
   simplifyTolerance: 0.1,
 });
-const simplifiedPath = SvgPathSimplifier.simplifyPath("M 0 0 L 10 0 L 20 0");
+const simplifiedPath = SvgPathSimplifier.simplifyPath('M 0 0 L 10 0 L 20 0');
 ```
 
 ## API
@@ -71,16 +72,16 @@ Creates a Potrace instance from `ImageData`.
 Scale and translation values use this shape:
 
 ```typescript
-type TransformPoint = { x: number; y: number };
+type TransformPoint = {x: number; y: number};
 ```
 
 Examples:
 
 ```typescript
 const path = potrace.getSVGPath();
-const scaledPath = potrace.getSVGPath({ x: 2, y: 2 });
-const movedPath = potrace.getSVGPath(undefined, { x: 10, y: 20 });
-const scaledAndMovedPath = potrace.getSVGPath({ x: 2, y: 2 }, { x: 10, y: 20 });
+const scaledPath = potrace.getSVGPath({x: 2, y: 2});
+const movedPath = potrace.getSVGPath(undefined, {x: 10, y: 20});
+const scaledAndMovedPath = potrace.getSVGPath({x: 2, y: 2}, {x: 10, y: 20});
 ```
 
 Simplification options use this shape:
