@@ -29,15 +29,21 @@ pnpm add @buzz-dee/potrace-ts
 ## Usage
 
 ```typescript
-import {Potrace, SvgPathSimplifier} from '@buzz-dee/potrace-ts';
+import {
+  Potrace,
+  SvgPathSimplifier,
+  type PotraceOptions,
+} from '@buzz-dee/potrace-ts';
 
 const imageData = canvas.getContext('2d')!.getImageData(0, 0, width, height);
 
-const potrace = new Potrace(imageData, {
+const options: PotraceOptions = {
   threshold: Potrace.THRESHOLD_AUTO,
   turdSize: 2,
   optCurve: true,
-});
+};
+
+const potrace = new Potrace(imageData, options);
 
 const svg = potrace.getSVG();
 const pathData = potrace.getSVGPath({x: 1, y: 1}, {x: 0, y: 0});
