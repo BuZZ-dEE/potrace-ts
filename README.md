@@ -2,6 +2,13 @@
 
 A TypeScript implementation of Potrace for converting bitmap image data to scalable vector graphics (SVG).
 
+[![CI](https://github.com/BuZZ-dEE/potrace-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/BuZZ-dEE/potrace-ts/actions/workflows/ci.yml)
+[![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/BuZZ-dEE/potrace-ts)
+[![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/%40buzz-dee%2Fpotrace-ts)](https://libraries.io/npm/%40buzz-dee%2Fpotrace-ts)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/%40buzz-dee%2Fpotrace-ts)](https://bundlephobia.com/package/%40buzz-dee%2Fpotrace-ts)
+[![npm](https://img.shields.io/npm/v/%40buzz-dee%2Fpotrace-ts)](https://www.npmjs.com/package/%40buzz-dee%2Fpotrace-ts)
+[![NPM](https://img.shields.io/npm/l/%40buzz-dee%2Fpotrace-ts)](https://github.com/BuZZ-dEE/potrace-ts/blob/main/LICENSE.txt)
+
 > Forked from [node-potrace](https://github.com/iwsfg/node-potrace.git)
 
 ## Introduction
