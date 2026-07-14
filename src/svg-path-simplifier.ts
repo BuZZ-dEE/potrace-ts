@@ -1,4 +1,4 @@
-import type { PointLike as Point } from "./base/point";
+import type {PointLike as Point} from './base/point';
 
 /**
  * Options controlling SVG path simplification.
@@ -45,7 +45,8 @@ type CubicSegment = {type: 'C'; p0: Point; c1: Point; c2: Point; p1: Point};
 type QuadraticSegment = {type: 'Q'; p0: Point; c: Point; p1: Point};
 type CloseSegment = {type: 'Z'; p0: Point; p1: Point};
 
-type PathSegment = MoveSegment | LineSegment | CubicSegment | QuadraticSegment | CloseSegment;
+type PathSegment =
+  MoveSegment | LineSegment | CubicSegment | QuadraticSegment | CloseSegment;
 
 export class SvgPathSimplifier {
   /* ===================== PUBLIC API ===================== */
@@ -57,7 +58,10 @@ export class SvgPathSimplifier {
    * @param {SimplifyOptions} [options={}] - Optional simplification settings.
    * @returns {SimplifyResult} Simplified path data and statistics.
    */
-  static simplifyPath(d: string, options: SimplifyOptions = {}): SimplifyResult {
+  static simplifyPath(
+    d: string,
+    options: SimplifyOptions = {},
+  ): SimplifyResult {
     const flattenTol = options.flattenTolerance ?? 0.5;
     const simplifyTol = options.simplifyTolerance ?? 0.1;
 
@@ -68,12 +72,19 @@ export class SvgPathSimplifier {
     const pointsBefore = originalPaths.reduce((sum, p) => sum + p.length, 0);
 
     // ✂️ simplify
-    const simplifiedPaths = originalPaths.map(p => this.simplifySubPath(p, simplifyTol));
+    const simplifiedPaths = originalPaths.map(p =>
+      this.simplifySubPath(p, simplifyTol),
+    );
 
-    const pointsAfter = simplifiedPaths.reduce((sum, p) => sum + p.points.length, 0);
+    const pointsAfter = simplifiedPaths.reduce(
+      (sum, p) => sum + p.points.length,
+      0,
+    );
 
     // 🧾 build svg
-    const simplifiedD = simplifiedPaths.map(p => this.buildPath(p.points, p.closed)).join(' ');
+    const simplifiedD = simplifiedPaths
+      .map(p => this.buildPath(p.points, p.closed))
+      .join(' ');
 
     return {
       originalPath: d,
@@ -82,9 +93,11 @@ export class SvgPathSimplifier {
         pointsBefore,
         pointsAfter,
         reductionPercent:
-          pointsBefore === 0 ? 0 : Math.round((1 - pointsAfter / pointsBefore) * 1000) / 10,
-        subPaths: simplifiedPaths.length
-      }
+          pointsBefore === 0
+            ? 0
+            : Math.round((1 - pointsAfter / pointsBefore) * 1000) / 10,
+        subPaths: simplifiedPaths.length,
+      },
     };
   }
 
@@ -92,21 +105,22 @@ export class SvgPathSimplifier {
 
   private static simplifySubPath(
     points: Point[],
-    epsilon: number
+    epsilon: number,
   ): {points: Point[]; closed: boolean} {
     if (points.length < 2) {
       return {points, closed: false};
     }
 
     const closed =
-      points.length > 2 && this.distance(points[0], points[points.length - 1]) < epsilon;
+      points.length > 2 &&
+      this.distance(points[0], points[points.length - 1]) < epsilon;
 
     const openPoints = closed ? points.slice(0, -1) : points;
     const simplified = this.rdp(openPoints, epsilon);
 
     return {
       points: simplified,
-      closed
+      closed,
     };
   }
 
@@ -181,7 +195,10 @@ export class SvgPathSimplifier {
 
   /* ===================== FLATTENING ===================== */
 
-  private static flattenSegments(segments: PathSegment[], tol: number): Point[][] {
+  private static flattenSegments(
+    segments: PathSegment[],
+    tol: number,
+  ): Point[][] {
     const paths: Point[][] = [];
     let current: Point[] = [];
 
@@ -212,9 +229,12 @@ export class SvgPathSimplifier {
     c2: Point,
     p1: Point,
     tol: number,
-    add: (p: Point) => void
+    add: (p: Point) => void,
   ): void {
-    const steps = Math.max(2, Math.ceil(this.curveLength(p0, c1, c2, p1) / tol));
+    const steps = Math.max(
+      2,
+      Math.ceil(this.curveLength(p0, c1, c2, p1) / tol),
+    );
 
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
@@ -227,7 +247,7 @@ export class SvgPathSimplifier {
     c: Point,
     p1: Point,
     tol: number,
-    add: (p: Point) => void
+    add: (p: Point) => void,
   ): void {
     const steps = Math.max(2, Math.ceil(this.distance(p0, p1) / tol));
 
@@ -292,15 +312,36 @@ export class SvgPathSimplifier {
     return this.distance(p, proj);
   }
 
-  private static curveLength(p0: Point, c1: Point, c2: Point, p1: Point): number {
-    return this.distance(p0, c1) + this.distance(c1, c2) + this.distance(c2, p1);
+  private static curveLength(
+    p0: Point,
+    c1: Point,
+    c2: Point,
+    p1: Point,
+  ): number {
+    return (
+      this.distance(p0, c1) + this.distance(c1, c2) + this.distance(c2, p1)
+    );
   }
 
-  private static cubicAt(p0: Point, c1: Point, c2: Point, p1: Point, t: number): Point {
+  private static cubicAt(
+    p0: Point,
+    c1: Point,
+    c2: Point,
+    p1: Point,
+    t: number,
+  ): Point {
     const u = 1 - t;
     return {
-      x: u ** 3 * p0.x + 3 * u ** 2 * t * c1.x + 3 * u * t ** 2 * c2.x + t ** 3 * p1.x,
-      y: u ** 3 * p0.y + 3 * u ** 2 * t * c1.y + 3 * u * t ** 2 * c2.y + t ** 3 * p1.y
+      x:
+        u ** 3 * p0.x +
+        3 * u ** 2 * t * c1.x +
+        3 * u * t ** 2 * c2.x +
+        t ** 3 * p1.x,
+      y:
+        u ** 3 * p0.y +
+        3 * u ** 2 * t * c1.y +
+        3 * u * t ** 2 * c2.y +
+        t ** 3 * p1.y,
     };
   }
 
@@ -308,7 +349,7 @@ export class SvgPathSimplifier {
     const u = 1 - t;
     return {
       x: u * u * p0.x + 2 * u * t * c.x + t * t * p1.x,
-      y: u * u * p0.y + 2 * u * t * c.y + t * t * p1.y
+      y: u * u * p0.y + 2 * u * t * c.y + t * t * p1.y,
     };
   }
 }

@@ -26,7 +26,8 @@
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "pnpm clean && rolldown --config && tsc --emitDeclarationOnly",
     "test": "jest",
-    "lint": "eslint --ext .js,.ts src"
+    "lint": "eslint --ext .js,.ts src",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/chai": "5.2.3",
@@ -37,9 +38,14 @@
     "@typescript-eslint/parser": "^8.63.0",
     "chai": "^6.2.2",
     "eslint": "^10.7.0",
+    "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "5.5.6",
+    "husky": "9.1.7",
     "jest": "^30.4.2",
+    "lint-staged": "17.0.8",
+    "prettier": "3.9.5",
     "rolldown": "^1.0.0",
     "ts-jest": "^29.4.11",
     "tslib": "^2.6.2",
@@ -76,5 +82,11 @@
     ],
     "maxConcurrency": 10,
     "maxWorkers": 1
+  },
+  "lint-staged": {
+    "*.{md,ts}": "prettier --write",
+    "*.{js,ts}": [
+      "eslint --cache --fix"
+    ]
   }
 }

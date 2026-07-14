@@ -1,5 +1,7 @@
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import prettierConfig from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier";
 
 export default [
     {
@@ -24,9 +26,11 @@ export default [
         },
         plugins: {
             "@typescript-eslint": tsPlugin,
+            prettier: prettierPlugin,
         },
         rules: {
             ...tsPlugin.configs.recommended.rules,
+            ...prettierConfig.rules,
             "@typescript-eslint/no-explicit-any": "error",
             "@typescript-eslint/explicit-function-return-type": "error",
             "@typescript-eslint/no-inferrable-types": "off",
@@ -36,6 +40,7 @@ export default [
             "no-empty": "off",
             "no-undef": "off",
             "no-unused-vars": "off",
+            "prettier/prettier": "error",
         },
     },
 ];
