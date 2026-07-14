@@ -10,7 +10,7 @@ A TypeScript implementation of Potrace for converting bitmap image data to scala
 [![npm](https://img.shields.io/npm/v/%40buzz-dee%2Fpotrace-ts)](https://www.npmjs.com/package/%40buzz-dee%2Fpotrace-ts)
 [![NPM](https://img.shields.io/npm/l/%40buzz-dee%2Fpotrace-ts)](https://github.com/BuZZ-dEE/potrace-ts/blob/main/LICENSE.txt)
 
-> Forked from [node-potrace](https://github.com/iwsfg/node-potrace.git)
+> Forked from [potrace-ts](https://github.com/minkicc/potrace-ts), which is forked from [node-potrace](https://github.com/iwsfg/node-potrace).
 
 ## Introduction
 
