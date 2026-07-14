@@ -29,10 +29,12 @@ export interface PathStatistics {
 /**
  * Result returned by {@link SvgPathSimplifier.simplifyPath}.
  *
+ * @property {string} originalPath - Original SVG path data before simplification.
  * @property {string} d - Simplified SVG path data.
  * @property {PathStatistics} stats - Simplification statistics.
  */
 export interface SimplifyResult {
+  originalPath: string;
   d: string;
   stats: PathStatistics;
 }
@@ -74,6 +76,7 @@ export class SvgPathSimplifier {
     const simplifiedD = simplifiedPaths.map(p => this.buildPath(p.points, p.closed)).join(' ');
 
     return {
+      originalPath: d,
       d: simplifiedD,
       stats: {
         pointsBefore,

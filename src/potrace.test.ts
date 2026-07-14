@@ -68,6 +68,7 @@ describe("Potrace", () => {
             simplifyTolerance: 0.1,
         });
 
+        expect(simplified.originalPath).toBe(potrace.getSVGPath());
         expect(simplified.d).toEqual(expect.any(String));
         expect(simplified.stats.pointsBefore).toBeGreaterThanOrEqual(simplified.stats.pointsAfter);
         expect(simplified.stats.subPaths).toBeGreaterThanOrEqual(0);

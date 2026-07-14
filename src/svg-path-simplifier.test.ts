@@ -6,6 +6,7 @@ describe("SvgPathSimplifier", () => {
             simplifyTolerance: 0.1,
         });
 
+        expect(result.originalPath).toBe("M 0 0 L 10 0 L 20 0");
         expect(result.d).toBe("M 0 0 L 20 0");
         expect(result.stats.pointsBefore).toBe(3);
         expect(result.stats.pointsAfter).toBe(2);

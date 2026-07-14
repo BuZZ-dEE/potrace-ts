@@ -91,6 +91,7 @@ The simplified path result contains the path data and statistics:
 
 ```typescript
 interface SimplifyResult {
+  originalPath: string;
   d: string;
   stats: {
     pointsBefore: number;
