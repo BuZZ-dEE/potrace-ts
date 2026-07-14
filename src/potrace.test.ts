@@ -35,6 +35,29 @@ describe("Potrace", () => {
         expect(potrace.getPathTag()).toMatch(/^<path d=".+" stroke="none" fill="black" fill-rule="evenodd"\/>$/);
     });
 
+    it("generates SVG path data directly", () => {
+        const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), {
+            threshold: 128,
+        });
+
+        const path = potrace.getSVGPath();
+
+        expect(path).toMatch(/^M /);
+        expect(path).not.toContain("<path");
+    });
+
+    it("applies explicit and configured scaling and translation to SVG path data", () => {
+        const image = createImageData(2, 3, [0, 0, 0, 255]);
+        const explicit = new Potrace(image, { threshold: 128 }).getSVGPath({ x: 2, y: 3 }, { x: 5, y: 7 });
+        const configured = new Potrace(image, {
+            threshold: 128,
+            width: 4,
+            height: 9,
+        }).getSVGPath(undefined, { x: 5, y: 7 });
+
+        expect(configured).toBe(explicit);
+    });
+
     it("generates simplified SVG path data with statistics", () => {
         const potrace = new Potrace(createImageData(2, 2, [0, 0, 0, 255]), {
             threshold: 128,
