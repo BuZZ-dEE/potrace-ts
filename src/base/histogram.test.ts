@@ -1,11 +1,14 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
 import {Bitmap} from './bitmap';
 import {Histogram} from './histogram';
 
 describe('Histogram', () => {
   it('creates a correctly sized storage array for a pixel count', (): void => {
-    expect(new Histogram(10).data).toBeInstanceOf(Uint8Array);
-    expect(new Histogram(300).data).toBeInstanceOf(Uint16Array);
-    expect(new Histogram(70000).data).toBeInstanceOf(Uint32Array);
+    assert.ok(new Histogram(10).data instanceof Uint8Array);
+    assert.ok(new Histogram(300).data instanceof Uint16Array);
+    assert.ok(new Histogram(70000).data instanceof Uint32Array);
   });
 
   it('collects luminance values from a bitmap', (): void => {
@@ -14,18 +17,19 @@ describe('Histogram', () => {
 
     const histogram = new Histogram(bitmap);
 
-    expect(histogram.pixels).toBe(4);
-    expect(histogram.data[0]).toBe(1);
-    expect(histogram.data[10]).toBe(2);
-    expect(histogram.data[255]).toBe(1);
+    assert.equal(histogram.pixels, 4);
+    assert.equal(histogram.data[0], 1);
+    assert.equal(histogram.data[10], 2);
+    assert.equal(histogram.data[255], 1);
   });
 
   it('normalizes threshold ranges and rejects invalid ranges', (): void => {
     const histogram = new Histogram(4);
 
-    expect(histogram.multilevelThresholding(0)).toEqual([]);
-    expect(() => histogram.multilevelThresholding(1, 20, 10)).toThrow(
-      'Invalid range "20...10"',
+    assert.deepEqual(histogram.multilevelThresholding(0), []);
+    assert.throws(
+      () => histogram.multilevelThresholding(1, 20, 10),
+      /Invalid range "20\.\.\.10"/,
     );
   });
 
@@ -35,8 +39,8 @@ describe('Histogram', () => {
 
     const histogram = new Histogram(bitmap);
 
-    expect(histogram.multilevelThresholding(1)).toEqual([1]);
-    expect(histogram.autoThreshold()).toBe(1);
+    assert.deepEqual(histogram.multilevelThresholding(1), [1]);
+    assert.equal(histogram.autoThreshold(), 1);
   });
 
   it('returns dominant colors within a range', (): void => {
@@ -45,10 +49,10 @@ describe('Histogram', () => {
 
     const histogram = new Histogram(bitmap);
 
-    expect(histogram.getDominantColor(0, 30)).toBe(20);
-    expect(histogram.getDominantColor(30, 40)).toBe(-1);
-    expect(histogram.getDominantColor(10, 10)).toBe(10);
-    expect(histogram.getDominantColor(11, 11)).toBe(-1);
+    assert.equal(histogram.getDominantColor(0, 30), 20);
+    assert.equal(histogram.getDominantColor(30, 40), -1);
+    assert.equal(histogram.getDominantColor(10, 10), 10);
+    assert.equal(histogram.getDominantColor(11, 11), -1);
   });
 
   it('computes and caches histogram stats', (): void => {
@@ -58,12 +62,12 @@ describe('Histogram', () => {
     const histogram = new Histogram(bitmap);
     const stats = histogram.getStats(0, 20);
 
-    expect(stats.pixels).toBe(4);
-    expect(stats.levels.mean).toBe(10);
-    expect(stats.levels.median).toBe(20);
-    expect(stats.levels.unique).toBe(3);
-    expect(stats.pixelsPerLevel.peak).toBe(2);
-    expect(histogram.getStats(0, 20)).toBe(stats);
-    expect(histogram.getStats(0, 20, true)).not.toBe(stats);
+    assert.equal(stats.pixels, 4);
+    assert.equal(stats.levels.mean, 10);
+    assert.equal(stats.levels.median, 20);
+    assert.equal(stats.levels.unique, 3);
+    assert.equal(stats.pixelsPerLevel.peak, 2);
+    assert.equal(histogram.getStats(0, 20), stats);
+    assert.notEqual(histogram.getStats(0, 20, true), stats);
   });
 });

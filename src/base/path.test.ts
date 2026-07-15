@@ -1,3 +1,6 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
 import {Curve} from './curve';
 import {Path} from './path';
 
@@ -5,19 +8,19 @@ describe('Path', () => {
   it('initializes path metadata and containers', () => {
     const path = new Path();
 
-    expect(path.area).toBe(0);
-    expect(path.len).toBe(0);
-    expect(path.curve).toBeInstanceOf(Curve);
-    expect(path.curve.n).toBe(0);
-    expect(path.pt).toEqual([]);
+    assert.equal(path.area, 0);
+    assert.equal(path.len, 0);
+    assert.ok(path.curve instanceof Curve);
+    assert.equal(path.curve.n, 0);
+    assert.deepEqual(path.pt, []);
   });
 
   it('initializes bounds to sentinel values', () => {
     const path = new Path();
 
-    expect(path.minX).toBe(100000);
-    expect(path.minY).toBe(100000);
-    expect(path.maxX).toBe(-1);
-    expect(path.maxY).toBe(-1);
+    assert.equal(path.minX, 100000);
+    assert.equal(path.minY, 100000);
+    assert.equal(path.maxX, -1);
+    assert.equal(path.maxY, -1);
   });
 });

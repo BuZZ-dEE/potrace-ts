@@ -1,4 +1,5 @@
-/// <reference types="jest" />
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
 
 import {Potrace} from './potrace';
 
@@ -25,7 +26,8 @@ describe('Potrace', () => {
       height: 30,
     });
 
-    expect(potrace.getSVG()).toBe(
+    assert.equal(
+      potrace.getSVG(),
       '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" version="1.1">\n' +
         '\t<rect x="0" y="0" width="100%" height="100%" fill="white" />\n' +
         '\t<path d="" stroke="none" fill="black" fill-rule="evenodd"/>\n' +
@@ -38,7 +40,8 @@ describe('Potrace', () => {
       threshold: 128,
     });
 
-    expect(potrace.getPathTag()).toMatch(
+    assert.match(
+      potrace.getPathTag(),
       /^<path d=".+" stroke="none" fill="black" fill-rule="evenodd"\/>$/,
     );
   });
@@ -50,8 +53,8 @@ describe('Potrace', () => {
 
     const path = potrace.getSVGPath();
 
-    expect(path).toMatch(/^M /);
-    expect(path).not.toContain('<path');
+    assert.match(path, /^M /);
+    assert.equal(path.includes('<path'), false);
   });
 
   it('applies explicit and configured scaling and translation to SVG path data', () => {
@@ -66,7 +69,7 @@ describe('Potrace', () => {
       height: 9,
     }).getSVGPath(undefined, {x: 5, y: 7});
 
-    expect(configured).toBe(explicit);
+    assert.equal(configured, explicit);
   });
 
   it('generates simplified SVG path data with statistics', () => {
@@ -79,25 +82,26 @@ describe('Potrace', () => {
       simplifyTolerance: 0.1,
     });
 
-    expect(simplified.originalPath).toBe(potrace.getSVGPath());
-    expect(simplified.d).toEqual(expect.any(String));
-    expect(simplified.stats.pointsBefore).toBeGreaterThanOrEqual(
-      simplified.stats.pointsAfter,
-    );
-    expect(simplified.stats.subPaths).toBeGreaterThanOrEqual(0);
+    assert.equal(simplified.originalPath, potrace.getSVGPath());
+    assert.equal(typeof simplified.d, 'string');
+    assert.ok(simplified.stats.pointsBefore >= simplified.stats.pointsAfter);
+    assert.ok(simplified.stats.subPaths >= 0);
   });
 
   it('validates supported option values', () => {
     const image = createImageData(1, 1, [255, 255, 255, 255]);
 
-    expect(() => new Potrace(image, {turnPolicy: 'diagonal'})).toThrow(
-      'Bad turnPolicy value',
+    assert.throws(
+      () => new Potrace(image, {turnPolicy: 'diagonal'}),
+      /Bad turnPolicy value/,
     );
-    expect(() => new Potrace(image, {threshold: 256})).toThrow(
-      'Bad threshold value',
+    assert.throws(
+      () => new Potrace(image, {threshold: 256}),
+      /Bad threshold value/,
     );
-    expect(
+    assert.throws(
       () => new Potrace(image, {optCurve: 'yes' as unknown as boolean}),
-    ).toThrow("'optCurve' must be Boolean");
+      /'optCurve' must be Boolean/,
+    );
   });
 });

@@ -1,16 +1,19 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
 import {Curve} from './curve';
 
 describe('Curve', () => {
   it('initializes arrays from the segment count', () => {
     const curve = new Curve(3);
 
-    expect(curve.n).toBe(3);
-    expect(curve.tag).toHaveLength(3);
-    expect(curve.c).toHaveLength(9);
-    expect(curve.alphaCurve).toBe(0);
-    expect(curve.vertex).toHaveLength(3);
-    expect(curve.alpha).toHaveLength(3);
-    expect(curve.alpha0).toHaveLength(3);
-    expect(curve.beta).toHaveLength(3);
+    assert.equal(curve.n, 3);
+    assert.equal(curve.tag.length, 3);
+    assert.equal(curve.c.length, 9);
+    assert.equal(curve.alphaCurve, 0);
+    assert.equal(curve.vertex.length, 3);
+    assert.equal(curve.alpha.length, 3);
+    assert.equal(curve.alpha0.length, 3);
+    assert.equal(curve.beta.length, 3);
   });
 });

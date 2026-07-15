@@ -1,3 +1,6 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
 import {SvgPathSimplifier} from './svg-path-simplifier';
 
 describe('SvgPathSimplifier', () => {
@@ -6,12 +9,12 @@ describe('SvgPathSimplifier', () => {
       simplifyTolerance: 0.1,
     });
 
-    expect(result.originalPath).toBe('M 0 0 L 10 0 L 20 0');
-    expect(result.d).toBe('M 0 0 L 20 0');
-    expect(result.stats.pointsBefore).toBe(3);
-    expect(result.stats.pointsAfter).toBe(2);
-    expect(result.stats.reductionPercent).toBe(33.3);
-    expect(result.stats.subPaths).toBe(1);
+    assert.equal(result.originalPath, 'M 0 0 L 10 0 L 20 0');
+    assert.equal(result.d, 'M 0 0 L 20 0');
+    assert.equal(result.stats.pointsBefore, 3);
+    assert.equal(result.stats.pointsAfter, 2);
+    assert.equal(result.stats.reductionPercent, 33.3);
+    assert.equal(result.stats.subPaths, 1);
   });
 
   it('preserves corners when simplifying relative closed paths', (): void => {
@@ -19,11 +22,11 @@ describe('SvgPathSimplifier', () => {
       simplifyTolerance: 0.1,
     });
 
-    expect(result.d).toBe('M 0 0 L 10 0 L 10 10 Z');
-    expect(result.stats.pointsBefore).toBe(4);
-    expect(result.stats.pointsAfter).toBe(3);
-    expect(result.stats.reductionPercent).toBe(25);
-    expect(result.stats.subPaths).toBe(1);
+    assert.equal(result.d, 'M 0 0 L 10 0 L 10 10 Z');
+    assert.equal(result.stats.pointsBefore, 4);
+    assert.equal(result.stats.pointsAfter, 3);
+    assert.equal(result.stats.reductionPercent, 25);
+    assert.equal(result.stats.subPaths, 1);
   });
 
   it('flattens cubic curves before simplifying', (): void => {
@@ -32,10 +35,10 @@ describe('SvgPathSimplifier', () => {
       simplifyTolerance: 0.1,
     });
 
-    expect(result.d).toMatch(/^M 0 0 L /);
-    expect(result.stats.pointsBefore).toBe(4);
-    expect(result.stats.pointsAfter).toBeGreaterThanOrEqual(3);
-    expect(result.stats.subPaths).toBe(1);
+    assert.match(result.d, /^M 0 0 L /);
+    assert.equal(result.stats.pointsBefore, 4);
+    assert.ok(result.stats.pointsAfter >= 3);
+    assert.equal(result.stats.subPaths, 1);
   });
 
   it('flattens quadratic curves before simplifying', (): void => {
@@ -44,19 +47,19 @@ describe('SvgPathSimplifier', () => {
       simplifyTolerance: 0.1,
     });
 
-    expect(result.d).toMatch(/^M 0 0 L /);
-    expect(result.stats.pointsBefore).toBeGreaterThanOrEqual(3);
-    expect(result.stats.pointsAfter).toBeGreaterThanOrEqual(3);
-    expect(result.stats.subPaths).toBe(1);
+    assert.match(result.d, /^M 0 0 L /);
+    assert.ok(result.stats.pointsBefore >= 3);
+    assert.ok(result.stats.pointsAfter >= 3);
+    assert.equal(result.stats.subPaths, 1);
   });
 
   it('returns empty output for empty path data', (): void => {
     const result = SvgPathSimplifier.simplifyPath('');
 
-    expect(result.d).toBe('');
-    expect(result.stats.pointsBefore).toBe(0);
-    expect(result.stats.pointsAfter).toBe(0);
-    expect(result.stats.reductionPercent).toBe(0);
-    expect(result.stats.subPaths).toBe(0);
+    assert.equal(result.d, '');
+    assert.equal(result.stats.pointsBefore, 0);
+    assert.equal(result.stats.pointsAfter, 0);
+    assert.equal(result.stats.reductionPercent, 0);
+    assert.equal(result.stats.subPaths, 0);
   });
 });

@@ -1,13 +1,16 @@
+import assert from 'node:assert/strict';
+import {describe, it} from 'node:test';
+
 import {Sum} from './sum';
 
 describe('Sum', () => {
   it('stores all cumulative sum values passed to the constructor', () => {
     const sum = new Sum(1, 2, 3, 4, 5);
 
-    expect(sum.x).toBe(1);
-    expect(sum.y).toBe(2);
-    expect(sum.xy).toBe(3);
-    expect(sum.x2).toBe(4);
-    expect(sum.y2).toBe(5);
+    assert.equal(sum.x, 1);
+    assert.equal(sum.y, 2);
+    assert.equal(sum.xy, 3);
+    assert.equal(sum.x2, 4);
+    assert.equal(sum.y2, 5);
   });
 });
