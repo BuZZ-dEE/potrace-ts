@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import {Potrace} from './potrace';
 
 function createImageData(
